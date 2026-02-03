@@ -13,3 +13,10 @@ def home(request: Request):
         "index.html",
         {"request": request}
     )
+
+@app.get("/register")
+def register_page(request: Request):
+    return templates.TemplateResponse(
+        "register.html",
+        {"request": request}
+    )
