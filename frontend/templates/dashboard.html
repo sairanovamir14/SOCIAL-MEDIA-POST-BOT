@@ -4,9 +4,25 @@
 <h2>My Profile</h2>
 
 <p><b>Email:</b> {{ email }}</p>
-<p><b>API Token:</b> {{ token }}</p>
+<p>
+    <b>API Token:</b>
+    <input id="tokenField" type="text" value="{{ token }}" readonly>
+    <button onclick="copyToken()">Copy</button>
+</p>
+
 
 <br>
 
 <a href="/logout">Logout</a>
+
+<script>
+function copyToken() {
+    const input = document.getElementById("tokenField");
+    input.select();
+    input.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(input.value);
+    alert("Token copied!");
+}
+</script>
+
 {% endblock %}
