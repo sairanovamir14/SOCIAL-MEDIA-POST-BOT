@@ -415,7 +415,9 @@ async def platform(call, state):
 async def receive_token(msg: types.Message):
     if msg.text.startswith("/"):
         return
+
     token = msg.text.strip()
+
     db = SessionLocal()
     user = db.query(User).filter(User.api_token == token).first()
 
@@ -424,11 +426,17 @@ async def receive_token(msg: types.Message):
         await msg.answer("❌ Неверный токен")
         return
 
+    if user.tg_id is not None and user.tg_id != msg.from_user.id:
+        db.close()
+        await msg.answer("❌ Этот токен уже используется")
+        return
+
     user.tg_id = msg.from_user.id
     db.commit()
     db.close()
 
     await msg.answer("✅ Аккаунт привязан! Напишите /menu")
+
     
 
 
