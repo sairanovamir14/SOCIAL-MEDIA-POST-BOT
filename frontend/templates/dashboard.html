@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>My Profile</h2>
+
+<p><b>Email:</b> {{ email }}</p>
+<p><b>API Token:</b> {{ token }}</p>
+
+<br>
+
+<a href="/logout">Logout</a>
+{% endblock %}
