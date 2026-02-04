@@ -1,3 +1,56 @@
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6fb;
+  padding: 20px;
+}
+
+h1, h2 {
+  color: #333;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  background: white;
+}
+
+th, td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+th {
+  background: #2c3e50;
+  color: white;
+}
+
+tr:nth-child(even) {
+  background: #f2f2f2;
+}
+
+button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+form {
+  display: inline;
+}
+
+a {
+  text-decoration: none;
+  color: #3498db;
+  font-weight: bold;
+}
+</style>
+
 <h1>Admin Panel</h1>
 
 <h2>Statistics</h2>
@@ -50,16 +103,23 @@
 
   <td>
     <form action="/admin/unlink/{{u.id}}" method="post" style="display:inline;">
-      <button>Unlink TG</button>
+     <button onclick="return confirm('Unlink Telegram for {{u.email}}?')">
+        Unlink TG
+      </button>
     </form>
 
     <form action="/admin/reset-token/{{u.id}}" method="post" style="display:inline;">
-      <button>Reset Token</button>
+      <button onclick="return confirm('Reset token for {{u.email}}?')">
+        Reset Token
+      </button>
     </form>
 
     <form action="/admin/delete/{{u.id}}" method="post" style="display:inline;">
-      <button onclick="return confirm('Delete user?')">Delete</button>
+      <button onclick="return confirm('DELETE user {{u.email}}? This cannot be undone!')">
+        Delete
+      </button>
     </form>
+
   </td>
 </tr>
 {% endfor %}

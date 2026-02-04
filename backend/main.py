@@ -299,7 +299,7 @@ def admin_delete_user(user_id: int, request: Request):
     db = SessionLocal()
     target = db.query(User).filter(User.id == user_id).first()
     if target:
-        dlog_admin_action(user.email, "Delete user", target.email)
+        log_admin_action(user.email, "Delete user", target.email)
         db.delete(target)
         db.commit()
     db.close()
