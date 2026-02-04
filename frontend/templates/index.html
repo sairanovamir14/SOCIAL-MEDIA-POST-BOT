@@ -9,10 +9,11 @@
     border-radius:14px;
     text-align:center;
     box-shadow:0 0 20px rgba(0,0,0,0.05);
+    margin-bottom:40px;
 }
 
 .hero h2{
-    font-size:32px;
+    font-size:34px;
     margin-bottom:15px;
 }
 
@@ -45,17 +46,95 @@
 .hero-buttons a:hover{
     opacity:0.9;
 }
+
+/* GUIDE */
+
+.guide{
+    background:white;
+    padding:40px;
+    border-radius:14px;
+    box-shadow:0 0 20px rgba(0,0,0,0.05);
+}
+
+.guide h3{
+    margin-bottom:20px;
+}
+
+.steps{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:20px;
+}
+
+.step{
+    background:#f7f9fc;
+    padding:20px;
+    border-radius:10px;
+}
+
+.step span{
+    font-size:26px;
+}
+
+.step h4{
+    margin:10px 0;
+}
+
+.step p{
+    color:#555;
+}
 </style>
 
+<!-- HERO -->
+
 <div class="hero">
+    <h2>🚀 AI SMM Platform</h2>
+    <p>Create social media posts using Artificial Intelligence in seconds</p>
 
-<h2>🚀 AI SMM Platform</h2>
+    <div class="hero-buttons">
+        <a href="/register">Get Started</a>
+        <a class="secondary" href="/login">Login</a>
+    </div>
+</div>
 
-<p>Create social media posts using Artificial Intelligence in seconds</p>
+<!-- GUIDE -->
 
-<div class="hero-buttons">
-    <a href="/register">Get Started</a>
-    <a class="secondary" href="/login">Login</a>
+<div class="guide">
+
+<h3>📖 Quick Start Guide</h3>
+
+<div class="steps">
+
+<div class="step">
+<span>1️⃣</span>
+<h4>Create Account</h4>
+<p>Register on the website and receive your personal API token.</p>
+</div>
+
+<div class="step">
+<span>2️⃣</span>
+<h4>Login to Telegram Bot</h4>
+<p>Open the bot, type /start and send your token.</p>
+</div>
+
+<div class="step">
+<span>3️⃣</span>
+<h4>Generate Content</h4>
+<p>Enter topic → choose image → select language → preview post.</p>
+</div>
+
+<div class="step">
+<span>4️⃣</span>
+<h4>Publish</h4>
+<p>Post to Telegram, Instagram, Facebook or all platforms.</p>
+</div>
+
+<div class="step">
+<span>5️⃣</span>
+<h4>Manage Account</h4>
+<p>View your token and profile in dashboard.</p>
+</div>
+
 </div>
 
 </div>
