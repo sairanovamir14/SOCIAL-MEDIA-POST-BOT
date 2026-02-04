@@ -1,3 +1,11 @@
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")
+
+
 from starlette.middleware.sessions import SessionMiddleware
 from fastapi import FastAPI, Request, Form
 from fastapi.templating import Jinja2Templates
@@ -12,7 +20,6 @@ import secrets
 from sqlalchemy.orm import Session
 
 # -----------------------
-
 app = FastAPI()
 
 app.add_middleware(
@@ -136,6 +143,11 @@ def login_user(
     request.session["user_id"] = user.id
     db.close()
 
+    # 👉 ЕСЛИ АДМИН
+    if user.email == ADMIN_EMAIL:
+        return RedirectResponse("/admin", status_code=302)
+
+    # 👉 ЕСЛИ ОБЫЧНЫЙ ЮЗЕР
     return RedirectResponse("/dashboard", status_code=302)
 
 # -----------------------
@@ -175,3 +187,79 @@ def profile_redirect(request: Request):
         return RedirectResponse("/dashboard", status_code=302)
     else:
         return RedirectResponse("/login", status_code=302)
+
+# -----------------------
+# ADMIN PANEL
+# -----------------------
+
+@app.get("/admin")
+def admin_panel(request: Request):
+    user = get_current_user(request)
+
+    if not user:
+        return RedirectResponse("/login", status_code=302)
+
+    if user.email != ADMIN_EMAIL:
+        return RedirectResponse("/dashboard", status_code=302)
+
+    db = SessionLocal()
+    users = db.query(User).all()
+    db.close()
+
+    return templates.TemplateResponse(
+        "admin.html",
+        {
+            "request": request,
+            "users": users
+        }
+    )
+
+# -----------------------
+# ADMIN ACTIONS
+# -----------------------
+
+@app.post("/admin/unlink/{user_id}")
+def admin_unlink(user_id: int, request: Request):
+    user = get_current_user(request)
+    if not user or user.email != ADMIN_EMAIL:
+        return RedirectResponse("/login", status_code=302)
+
+    db = SessionLocal()
+    target = db.query(User).filter(User.id == user_id).first()
+    if target:
+        target.tg_id = None
+        db.commit()
+    db.close()
+
+    return RedirectResponse("/admin", status_code=302)
+
+
+@app.post("/admin/reset-token/{user_id}")
+def admin_reset_token(user_id: int, request: Request):
+    user = get_current_user(request)
+    if not user or user.email != ADMIN_EMAIL:
+        return RedirectResponse("/login", status_code=302)
+
+    db = SessionLocal()
+    target = db.query(User).filter(User.id == user_id).first()
+    if target:
+        target.api_token = secrets.token_hex(16)
+        db.commit()
+    db.close()
+
+    return RedirectResponse("/admin", status_code=302)
+
+@app.post("/admin/delete/{user_id}")
+def admin_delete_user(user_id: int, request: Request):
+    user = get_current_user(request)
+    if not user or user.email != ADMIN_EMAIL:
+        return RedirectResponse("/login", status_code=302)
+
+    db = SessionLocal()
+    target = db.query(User).filter(User.id == user_id).first()
+    if target:
+        db.delete(target)
+        db.commit()
+    db.close()
+
+    return RedirectResponse("/admin", status_code=302)
