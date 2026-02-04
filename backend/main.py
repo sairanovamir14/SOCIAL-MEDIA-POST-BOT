@@ -1,3 +1,4 @@
+from models import AdminLog
 import os
 from dotenv import load_dotenv
 
@@ -62,6 +63,20 @@ def get_current_user(request: Request):
     db.close()
 
     return user
+# -----------------------
+# ADMIN LOGGING
+# -----------------------
+
+def log_admin_action(admin_email, action, target_email):
+    db = SessionLocal()
+    log = AdminLog(
+        admin_email=admin_email,
+        action=action,
+        target_email=target_email
+    )
+    db.add(log)
+    db.commit()
+    db.close()
 
 # -----------------------
 # PAGES
@@ -193,24 +208,48 @@ def profile_redirect(request: Request):
 # -----------------------
 
 @app.get("/admin")
-def admin_panel(request: Request):
+def admin_panel(
+    request: Request,
+    q: str = "",
+    tg: str = ""
+):
     user = get_current_user(request)
 
-    if not user:
+    if not user or user.email != ADMIN_EMAIL:
         return RedirectResponse("/login", status_code=302)
 
-    if user.email != ADMIN_EMAIL:
-        return RedirectResponse("/dashboard", status_code=302)
-
     db = SessionLocal()
-    users = db.query(User).all()
+
+    # ---- STATISTICS ----
+    total_users = db.query(User).count()
+    with_tg = db.query(User).filter(User.tg_id != None).count()
+    without_tg = db.query(User).filter(User.tg_id == None).count()
+
+    # ---- USERS LIST ----
+    query = db.query(User)
+
+    if q:
+        query = query.filter(User.email.contains(q))
+
+    if tg == "yes":
+        query = query.filter(User.tg_id != None)
+
+    if tg == "no":
+        query = query.filter(User.tg_id == None)
+
+    users = query.all()
     db.close()
 
     return templates.TemplateResponse(
         "admin.html",
         {
             "request": request,
-            "users": users
+            "users": users,
+            "q": q,
+            "tg": tg,
+            "total_users": total_users,
+            "with_tg": with_tg,
+            "without_tg": without_tg
         }
     )
 
@@ -229,6 +268,7 @@ def admin_unlink(user_id: int, request: Request):
     if target:
         target.tg_id = None
         db.commit()
+        log_admin_action(user.email, "Unlink Telegram", target.email)
     db.close()
 
     return RedirectResponse("/admin", status_code=302)
@@ -245,6 +285,7 @@ def admin_reset_token(user_id: int, request: Request):
     if target:
         target.api_token = secrets.token_hex(16)
         db.commit()
+        log_admin_action(user.email, "Reset token", target.email)
     db.close()
 
     return RedirectResponse("/admin", status_code=302)
@@ -258,8 +299,28 @@ def admin_delete_user(user_id: int, request: Request):
     db = SessionLocal()
     target = db.query(User).filter(User.id == user_id).first()
     if target:
+        dlog_admin_action(user.email, "Delete user", target.email)
         db.delete(target)
         db.commit()
     db.close()
 
     return RedirectResponse("/admin", status_code=302)
+
+@app.get("/admin/logs")
+def admin_logs(request: Request):
+    user = get_current_user(request)
+
+    if not user or user.email != ADMIN_EMAIL:
+        return RedirectResponse("/login", status_code=302)
+
+    db = SessionLocal()
+    logs = db.query(AdminLog).order_by(AdminLog.timestamp.desc()).limit(200).all()
+    db.close()
+
+    return templates.TemplateResponse(
+        "admin_logs.html",
+        {
+            "request": request,
+            "logs": logs
+        }
+    )
