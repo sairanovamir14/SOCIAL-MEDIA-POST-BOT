@@ -1,6 +1,8 @@
 import os
 from dotenv import load_dotenv
 
+from db import SessionLocal
+from models import User
 
 
 import asyncio
@@ -36,6 +38,15 @@ openai.api_key = OPENAI_KEY
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher(storage=MemoryStorage())
 
+# ================================
+#  TOKEN VERIFICATION
+# ================================
+
+def get_user_by_token(token):
+    db = SessionLocal()
+    user = db.query(User).filter(User.api_token == token).first()
+    db.close()
+    return user
 
 # ================================
 # STATES
@@ -193,10 +204,14 @@ async def post_instagram(photo_url, caption):
 # ================================
 
 @dp.message(Command("start"))
-async def start(msg: types.Message, state: FSMContext):
-    await state.clear()
+async def start(msg: types.Message):
+    await msg.answer("Введите токен с сайта:")
+
+@dp.message(Command("menu"))
+async def menu(msg: types.Message, state: FSMContext):
     await msg.answer("✍️ Напиши тему поста:")
     await state.set_state(PostState.topic)
+
 
 
 # ================================
@@ -384,6 +399,23 @@ async def platform(call, state):
         reply_markup=restart_kb()
     )
 
+@dp.message()
+async def receive_token(msg: types.Message):
+    if msg.text.startswith("/"):
+        return
+    token = msg.text.strip()
+    user = get_user_by_token(token)
+
+    if not user:
+        await msg.answer("❌ Неверный токен")
+        return
+
+    db = SessionLocal()
+    user.tg_id = msg.from_user.id
+    db.commit()
+    db.close()
+
+    await msg.answer("✅ Аккаунт привязан! Напишите /menu")
 
 # ================================
 # RUN
