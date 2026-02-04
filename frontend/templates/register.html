@@ -8,4 +8,11 @@
     <input name="password" type="password" placeholder="Password"><br><br>
     <button>Register</button>
 </form>
+
+{% if token %}
+<hr>
+<p>Your API Token:</p>
+<b>{{ token }}</b>
+{% endif %}
+
 {% endblock %}

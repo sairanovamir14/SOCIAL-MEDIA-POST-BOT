@@ -13,3 +13,4 @@ Telegram-бот для генерации, редактирования и пу�
 Запуск:
 pip install -r requirements.txt
 python bot.py
+Sairanov Amir
