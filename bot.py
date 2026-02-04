@@ -211,6 +211,12 @@ async def post_instagram(photo_url, caption):
 
 @dp.message(Command("start"))
 async def start(msg: types.Message):
+    user = get_user_by_tg(msg.from_user.id)
+
+    if user:
+        await msg.answer("✅ Вы уже авторизованы. Напишите /menu")
+        return
+
     await msg.answer("Введите токен с сайта:")
 
 @dp.message(Command("menu"))
@@ -224,7 +230,21 @@ async def menu(msg: types.Message, state: FSMContext):
     await msg.answer("✍️ Напиши тему поста:")
     await state.set_state(PostState.topic)
     
+@dp.message(Command("unlink"))
+async def unlink(msg: types.Message):
+    db = SessionLocal()
+    user = db.query(User).filter(User.tg_id == msg.from_user.id).first()
 
+    if not user:
+        db.close()
+        await msg.answer("Вы не привязаны.")
+        return
+
+    user.tg_id = None
+    db.commit()
+    db.close()
+
+    await msg.answer("🔓 Аккаунт отвязан. Теперь введите токен заново через /start")
 
 # ================================
 # RESTART BUTTON
