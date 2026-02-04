@@ -29,6 +29,9 @@ pwd_context = CryptContext(
 def hash_password(password: str):
     return pwd_context.hash(password[:72])
 
+def verify_password(password: str, hashed: str):
+    return pwd_context.verify(password, hashed)
+
 # -----------------------
 
 @app.get("/")
@@ -75,5 +78,39 @@ def register_user(
         {
             "request": request,
             "token": token
+        }
+    )
+
+@app.get("/login")
+def login_page(request: Request):
+    return templates.TemplateResponse(
+        "login.html",
+        {"request": request}
+    )
+
+@app.post("/login")
+def login_user(
+    request: Request,
+    email: str = Form(...),
+    password: str = Form(...)
+):
+    db: Session = SessionLocal()
+
+    user = db.query(User).filter(User.email == email).first()
+
+    if not user or not verify_password(password, user.password):
+        return templates.TemplateResponse(
+            "login.html",
+            {
+                "request": request,
+                "error": "Invalid credentials"
+            }
+        )
+
+    return templates.TemplateResponse(
+        "login.html",
+        {
+            "request": request,
+            "token": user.api_token
         }
     )
