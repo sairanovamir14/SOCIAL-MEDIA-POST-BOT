@@ -166,3 +166,12 @@ def dashboard(request: Request):
 def logout(request: Request):
     request.session.clear()
     return RedirectResponse("/login", status_code=302)
+
+@app.get("/profile")
+def profile_redirect(request: Request):
+    user = get_current_user(request)
+
+    if user:
+        return RedirectResponse("/dashboard", status_code=302)
+    else:
+        return RedirectResponse("/login", status_code=302)
