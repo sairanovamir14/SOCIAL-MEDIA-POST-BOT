@@ -48,6 +48,12 @@ def get_user_by_token(token):
     db.close()
     return user
 
+def get_user_by_tg(tg_id):
+    db = SessionLocal()
+    user = db.query(User).filter(User.tg_id == tg_id).first()
+    db.close()
+    return user
+
 # ================================
 # STATES
 # ================================
@@ -209,9 +215,15 @@ async def start(msg: types.Message):
 
 @dp.message(Command("menu"))
 async def menu(msg: types.Message, state: FSMContext):
+    user = get_user_by_tg(msg.from_user.id)
+
+    if not user:
+        await msg.answer("🔐 Сначала введите токен через /start")
+        return
+
     await msg.answer("✍️ Напиши тему поста:")
     await state.set_state(PostState.topic)
-
+    
 
 
 # ================================
@@ -404,18 +416,21 @@ async def receive_token(msg: types.Message):
     if msg.text.startswith("/"):
         return
     token = msg.text.strip()
-    user = get_user_by_token(token)
+    db = SessionLocal()
+    user = db.query(User).filter(User.api_token == token).first()
 
     if not user:
+        db.close()
         await msg.answer("❌ Неверный токен")
         return
 
-    db = SessionLocal()
     user.tg_id = msg.from_user.id
     db.commit()
     db.close()
 
     await msg.answer("✅ Аккаунт привязан! Напишите /menu")
+    
+
 
 # ================================
 # RUN
