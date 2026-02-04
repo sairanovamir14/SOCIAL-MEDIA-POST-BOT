@@ -1,13 +1,76 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>AI SMM Platform</title>
-    <link rel="stylesheet" href="/static/style.css">
+<meta charset="UTF-8">
+<title>AI SMM Platform</title>
+
+<link rel="stylesheet" href="/static/style.css">
+
+<style>
+/* RESET */
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial, sans-serif;
+    background:#f4f6fb;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+}
+
+/* HEADER */
+header{
+    background:#1f2937;
+    color:white;
+    padding:15px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+header h1{
+    font-size:22px;
+}
+
+nav a{
+    color:white;
+    text-decoration:none;
+    margin-left:20px;
+    font-weight:bold;
+}
+
+nav a:hover{
+    color:#60a5fa;
+}
+
+/* MAIN */
+main{
+    flex:1;
+    padding:40px 20px;
+    max-width:1000px;
+    margin:auto;
+}
+
+/* FOOTER */
+footer{
+    background:#1f2937;
+    color:#aaa;
+    text-align:center;
+    padding:12px;
+    font-size:14px;
+}
+</style>
 </head>
+
 <body>
 
 <header>
-    <h1>AI SMM Platform</h1>
+    <h1>🚀 AI SMM Platform</h1>
+
     <nav>
         <a href="/">Home</a>
         <a href="/register">Register</a>
@@ -16,13 +79,9 @@
     </nav>
 </header>
 
-<hr>
-
 <main>
     {% block content %}{% endblock %}
 </main>
-
-<hr>
 
 <footer>
     <p>© 2026 AI SMM Platform</p>

@@ -1,129 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Panel</title>
+
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f4f6fb;
-  padding: 20px;
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#f4f6fb;
 }
 
-h1, h2 {
-  color: #333;
+/* Layout */
+.container{
+    max-width:1200px;
+    margin:30px auto;
+    padding:25px;
 }
 
-table {
-  border-collapse: collapse;
-  width: 100%;
-  background: white;
+/* Header */
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
 }
 
-th, td {
-  padding: 10px;
-  border: 1px solid #ddd;
+.header h1{
+    margin:0;
 }
 
-th {
-  background: #2c3e50;
-  color: white;
+.nav a{
+    margin-left:15px;
+    text-decoration:none;
+    color:#3498db;
+    font-weight:bold;
 }
 
-tr:nth-child(even) {
-  background: #f2f2f2;
+/* Cards */
+.cards{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+    margin-bottom:30px;
 }
 
-button {
-  padding: 6px 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+.card{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 2px 5px rgba(0,0,0,.08);
+    text-align:center;
 }
 
-button:hover {
-  opacity: 0.8;
+.card h2{
+    margin:0;
+    color:#555;
 }
 
-form {
-  display: inline;
+.card p{
+    font-size:28px;
+    margin:10px 0 0;
 }
 
-a {
-  text-decoration: none;
-  color: #3498db;
-  font-weight: bold;
+/* Filters */
+.filters{
+    display:flex;
+    gap:10px;
+    margin-bottom:20px;
+}
+
+input,select{
+    padding:8px;
+    border-radius:6px;
+    border:1px solid #ccc;
+}
+
+button{
+    padding:8px 12px;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.btn-search{background:#3498db;color:white;}
+.btn-unlink{background:#f39c12;color:white;}
+.btn-reset{background:#9b59b6;color:white;}
+.btn-delete{background:#e74c3c;color:white;}
+
+/* Table */
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+th{
+    background:#2c3e50;
+    color:white;
+    padding:10px;
+}
+
+td{
+    padding:10px;
+    border-bottom:1px solid #eee;
+}
+
+tr:hover{
+    background:#f7f7f7;
+}
+
+.actions form{
+    display:inline;
 }
 </style>
+</head>
 
-<h1>Admin Panel</h1>
+<body>
 
-<h2>Statistics</h2>
+<div class="container">
 
-<ul>
-  <li>Total users: {{ total_users }}</li>
-  <li>With Telegram: {{ with_tg }}</li>
-  <li>Without Telegram: {{ without_tg }}</li>
-</ul>
+<!-- HEADER -->
+<div class="header">
+    <h1>🛠 Admin Panel</h1>
+    <div class="nav">
+        <a href="/admin/logs">Logs</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/logout">Logout</a>
+    </div>
+</div>
 
-<a href="/admin/logs">View logs</a>
-<hr>
+<!-- STATS -->
+<div class="cards">
+    <div class="card">
+        <h2>Total Users</h2>
+        <p>{{ total_users }}</p>
+    </div>
 
-<hr>
+    <div class="card">
+        <h2>With Telegram</h2>
+        <p>{{ with_tg }}</p>
+    </div>
 
+    <div class="card">
+        <h2>Without Telegram</h2>
+        <p>{{ without_tg }}</p>
+    </div>
+</div>
+
+<!-- FILTERS -->
+<div class="filters">
 <form method="get" action="/admin">
-    <input type="text" name="q" placeholder="Search by email" value="{{ q }}">
-    <button>Search</button>
+    <input type="text" name="q" placeholder="Search email..." value="{{ q }}">
+    <button class="btn-search">Search</button>
 </form>
 
 <form method="get" action="/admin">
     <input type="hidden" name="q" value="{{ q }}">
-
     <select name="tg">
         <option value="">All</option>
         <option value="yes" {% if tg=="yes" %}selected{% endif %}>With Telegram</option>
         <option value="no" {% if tg=="no" %}selected{% endif %}>No Telegram</option>
     </select>
-
-    <button>Filter</button>
+    <button class="btn-search">Filter</button>
 </form>
+</div>
 
-<br>
-
-<table border="1">
+<!-- USERS TABLE -->
+<table>
 <tr>
-  <th>ID</th>
-  <th>Email</th>
-  <th>Token</th>
-  <th>Telegram ID</th>
-  <th>Actions</th>
+    <th>ID</th>
+    <th>Email</th>
+    <th>Token</th>
+    <th>Telegram</th>
+    <th>Actions</th>
 </tr>
 
 {% for u in users %}
 <tr>
-  <td>{{ u.id }}</td>
-  <td>{{ u.email }}</td>
-  <td>{{ u.api_token }}</td>
-  <td>{{ u.tg_id }}</td>
+<td>{{ u.id }}</td>
+<td>{{ u.email }}</td>
+<td>{{ u.api_token }}</td>
+<td>{{ u.tg_id }}</td>
 
-  <td>
-    <form action="/admin/unlink/{{u.id}}" method="post" style="display:inline;">
-     <button onclick="return confirm('Unlink Telegram for {{u.email}}?')">
-        Unlink TG
-      </button>
-    </form>
+<td class="actions">
 
-    <form action="/admin/reset-token/{{u.id}}" method="post" style="display:inline;">
-      <button onclick="return confirm('Reset token for {{u.email}}?')">
-        Reset Token
-      </button>
-    </form>
+<form action="/admin/unlink/{{u.id}}" method="post">
+<button class="btn-unlink"
+onclick="return confirm('Unlink Telegram for {{u.email}}?')">
+Unlink
+</button>
+</form>
 
-    <form action="/admin/delete/{{u.id}}" method="post" style="display:inline;">
-      <button onclick="return confirm('DELETE user {{u.email}}? This cannot be undone!')">
-        Delete
-      </button>
-    </form>
+<form action="/admin/reset-token/{{u.id}}" method="post">
+<button class="btn-reset"
+onclick="return confirm('Reset token for {{u.email}}?')">
+Reset
+</button>
+</form>
 
-  </td>
+<form action="/admin/delete/{{u.id}}" method="post">
+<button class="btn-delete"
+onclick="return confirm('DELETE {{u.email}}? This cannot be undone!')">
+Delete
+</button>
+</form>
+
+</td>
 </tr>
 {% endfor %}
 </table>
 
-<br>
-<a href="/dashboard">Back</a>
+</div>
+
+</body>
+</html>

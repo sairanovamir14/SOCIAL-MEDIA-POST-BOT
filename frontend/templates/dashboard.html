@@ -1,25 +1,102 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>My Profile</h2>
 
-<p><b>Email:</b> {{ email }}</p>
-<p>
-    <b>API Token:</b>
-    <input id="tokenField" type="text" value="{{ token }}" readonly>
-    <button onclick="copyToken()">Copy</button>
-</p>
+<style>
+.profile-card{
+    background:white;
+    padding:30px;
+    max-width:500px;
+    margin:auto;
+    border-radius:12px;
+    box-shadow:0 0 15px rgba(0,0,0,0.05);
+}
 
+.profile-card h2{
+    text-align:center;
+    margin-bottom:25px;
+}
 
-<br>
+.field{
+    margin-bottom:18px;
+}
 
-<a href="/logout">Logout</a>
+.label{
+    font-weight:bold;
+    margin-bottom:5px;
+    display:block;
+}
+
+.token-row{
+    display:flex;
+    gap:10px;
+}
+
+.token-row input{
+    flex:1;
+    padding:10px;
+    border-radius:6px;
+    border:1px solid #ccc;
+}
+
+.token-row button{
+    background:#4a6cf7;
+    color:white;
+    border:none;
+    padding:10px 14px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.token-row button:hover{
+    background:#3b5de0;
+}
+
+.logout-btn{
+    margin-top:25px;
+    display:block;
+    width:100%;
+    padding:12px;
+    background:#e74c3c;
+    color:white;
+    border-radius:6px;
+    text-align:center;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.logout-btn:hover{
+    background:#c0392b;
+}
+</style>
+
+<div class="profile-card">
+
+<h2>👤 My Profile</h2>
+
+<div class="field">
+    <span class="label">Email</span>
+    <p>{{ email }}</p>
+</div>
+
+<div class="field">
+    <span class="label">API Token</span>
+
+    <div class="token-row">
+        <input id="tokenField" type="text" value="{{ token }}" readonly>
+        <button onclick="copyToken()">Copy</button>
+    </div>
+</div>
+
+<a class="logout-btn" href="/logout">Logout</a>
+
+</div>
 
 <script>
-function copyToken() {
-    const input = document.getElementById("tokenField");
+function copyToken(){
+    const input=document.getElementById("tokenField");
     input.select();
-    input.setSelectionRange(0, 99999);
+    input.setSelectionRange(0,99999);
     navigator.clipboard.writeText(input.value);
     alert("Token copied!");
 }

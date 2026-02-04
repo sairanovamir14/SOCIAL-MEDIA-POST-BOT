@@ -1,6 +1,63 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Welcome!</h2>
-<p>Create social media posts using AI</p>
+
+<style>
+.hero{
+    background:white;
+    padding:60px 40px;
+    border-radius:14px;
+    text-align:center;
+    box-shadow:0 0 20px rgba(0,0,0,0.05);
+}
+
+.hero h2{
+    font-size:32px;
+    margin-bottom:15px;
+}
+
+.hero p{
+    font-size:18px;
+    color:#555;
+    margin-bottom:30px;
+}
+
+.hero-buttons{
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    flex-wrap:wrap;
+}
+
+.hero-buttons a{
+    background:#4a6cf7;
+    color:white;
+    padding:12px 22px;
+    border-radius:8px;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.hero-buttons a.secondary{
+    background:#10b981;
+}
+
+.hero-buttons a:hover{
+    opacity:0.9;
+}
+</style>
+
+<div class="hero">
+
+<h2>🚀 AI SMM Platform</h2>
+
+<p>Create social media posts using Artificial Intelligence in seconds</p>
+
+<div class="hero-buttons">
+    <a href="/register">Get Started</a>
+    <a class="secondary" href="/login">Login</a>
+</div>
+
+</div>
+
 {% endblock %}

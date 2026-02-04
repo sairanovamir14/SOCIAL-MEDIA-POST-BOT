@@ -1,6 +1,79 @@
-<h1>Admin Logs</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Logs</title>
 
-<table border="1">
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6fb;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 40px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background: #2c3e50;
+    color: white;
+    padding: 12px;
+    text-align: left;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+tr:nth-child(even) {
+    background: #f8f8f8;
+}
+
+tr:hover {
+    background: #eef3ff;
+}
+
+.back-btn {
+    display: inline-block;
+    margin-top: 25px;
+    padding: 10px 18px;
+    background: #4a6cf7;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+.back-btn:hover {
+    background: #3b5de0;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<h1>📝 Admin Logs</h1>
+
+<table>
 <tr>
   <th>Time</th>
   <th>Admin</th>
@@ -18,5 +91,9 @@
 {% endfor %}
 </table>
 
-<br>
-<a href="/admin">Back to admin panel</a>
+<a class="back-btn" href="/admin">← Back to admin panel</a>
+
+</div>
+
+</body>
+</html>
