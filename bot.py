@@ -114,16 +114,24 @@ def restart_kb():
 # AI
 # ================================
 
-def ask_gpt(prompt):
+from openai import OpenAI
+
+client = OpenAI(api_key=OPENAI_KEY)
+
+def ask_gpt(prompt: str) -> str:
     try:
-        r = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}],
+            messages=[
+                {"role": "user", "content": prompt}
+            ],
             max_tokens=900
         )
-        return r["choices"][0]["message"]["content"]
-    except:
+        return response.choices[0].message.content
+    except Exception as e:
+        print("GPT ERROR:", e)
         return "⚠️ Ошибка генерации."
+
 
 def generate_image(prompt):
     result = openai.Image.create(
