@@ -1,4 +1,4 @@
-AI Social Media Automation Bot
+# AI SMM Platform
 
 Telegram-бот для генерации, редактирования и публикации постов
 в Telegram, Instagram и Facebook с использованием ИИ.
